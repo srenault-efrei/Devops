@@ -1,0 +1,8 @@
+- hosts: all
+  tasks:
+  - name : create directory depending variable mkdir
+    file: 
+      path: /opt/E07
+      state: directory
+    when: mkdir == true
+

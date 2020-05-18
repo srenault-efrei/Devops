@@ -1,0 +1,18 @@
+all:
+  vars:
+    ansible_user: root
+    ansible_python_interpreter: /usr/bin/python3
+    registry_username: correction
+    registry_password: "p@ssword"
+  children:
+    www:
+      vars:
+        mkdir: true
+      hosts:
+        51.158.106.69:
+        51.15.245.155:
+    db:
+      vars:
+        mkdir: false
+      hosts:
+        51.158.121.43:

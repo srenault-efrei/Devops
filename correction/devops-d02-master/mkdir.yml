@@ -1,0 +1,9 @@
+- name: E07
+  hosts: all
+  vars:
+    path: /opt/E07
+  tasks:
+    - name: "Create or delete directory {{ path }}"
+      file:
+        path: "{{ path }}"
+        state: "{{ mkdir | ternary('directory', 'absent') }}"

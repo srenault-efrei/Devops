@@ -1,0 +1,10 @@
+version: "3"
+services:
+  app:
+    image: registry.efrei.yayo.fr/correction/devops-d01/node-count-redis:latest
+    environment:
+      REDIS_HOST: "{{ groups.db[0] }}"
+      REDIS_POST: 6379
+    restart: always
+    ports:
+      - 80:8080

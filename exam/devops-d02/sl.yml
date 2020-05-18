@@ -1,0 +1,4 @@
+- hosts: all
+  tasks: 
+  - name: apt install sl
+    command: apt install sl

@@ -1,0 +1,10 @@
+- name: Deploy app
+  hosts: all
+  tasks:
+    - name: Start app container
+      docker_container:
+        name: app
+        image: "registry.efrei.yayo.fr/correction/devops-d03/app:{{ version }}"
+        pull: true
+        published_ports:
+          - 80:80

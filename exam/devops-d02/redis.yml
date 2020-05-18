@@ -1,0 +1,12 @@
+- hosts: db
+  tasks:
+
+
+  - name: Create a data container
+    docker_container:
+      name: mydata
+      image: "redis:alpine"
+      state: started
+
+
+

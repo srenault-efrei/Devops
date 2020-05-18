@@ -1,0 +1,16 @@
+- name: E12
+  hosts: www
+  tasks:
+    - name: Create app directory
+      file:
+        path: /opt/my-app
+        state: directory
+    - name: Copy docker compose
+      template:
+        src: docker-compose.yml
+        dest: /opt/my-app/docker-compose.yml
+
+    - name: Start docker services
+      docker_compose:
+        project_src: /opt/my-app
+        state: present

@@ -1,0 +1,4 @@
+- import_playbook: setup-server.yml
+- import_playbook: docker.yml
+- import_playbook: redis.yml
+- import_playbook: app.yml

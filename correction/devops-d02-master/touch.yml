@@ -1,0 +1,7 @@
+- name: E06
+  hosts: www
+  tasks:
+    - name: Create the file
+      template:
+        src: E06.j2
+        dest: /opt/E06.txt

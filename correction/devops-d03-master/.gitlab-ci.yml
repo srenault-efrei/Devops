@@ -1,0 +1,67 @@
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  stage: test
+  image: node:14
+  script:
+    - yarn install
+    - yarn test --watchAll=false
+  only:
+    - merge_requests
+
+.build:
+  stage: build
+  image: docker
+  script:
+    - echo $REGISTRY_PASSWORD
+    - docker login registry.efrei.yayo.fr -u correction -p $REGISTRY_PASSWORD
+    - docker build -t registry.efrei.yayo.fr/correction/devops-d03/app:$VERSION .
+    - docker push registry.efrei.yayo.fr/correction/devops-d03/app:$VERSION
+
+build-latest:
+  extends: .build
+  variables:
+    VERSION: latest
+  only:
+    - master
+
+build-release:
+  extends: .build
+  variables:
+    VERSION: $CI_COMMIT_TAG
+  only:
+    - tags
+
+.deploy:
+  stage: deploy
+  image: python:3
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "False"
+  before_script:
+    - pip install ansible
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ansible-playbook -i infra/inventory.yml --extra-vars version=$VERSION -l $GROUP_NAME infra/app.yml
+
+deploy-staging:
+  extends: .deploy
+  variables:
+    VERSION: latest
+    GROUP_NAME: staging
+  only:
+    - master
+
+deploy-prod:
+  extends: .deploy
+  variables:
+    VERSION: $CI_COMMIT_TAG
+    GROUP_NAME: prod
+  only:
+    - tags

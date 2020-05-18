@@ -1,0 +1,18 @@
+- hosts: wwww
+  tasks:
+
+  - name : create directory my-app
+    file: 
+      path: /opt/my-app
+      state: directory
+
+  - name : create docker-compose.yml
+    template:
+      src: ./docker-compose.yml
+      dest: /opt/my-app/docker-compose.yml
+
+  - name: Create and start services
+    docker_compose:
+        project_src: /opt/my-app/
+    register: output
+

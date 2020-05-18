@@ -1,0 +1,13 @@
+ - name: E08
+   hosts: all
+   tasks:
+     - name: Install sl
+       apt:
+         name: sl
+         state: present
+
+#     - name: Create symlink
+#       file:
+#         src: /usr/games/sl
+#         dest: /usr/local/bin/sl
+#         state: link

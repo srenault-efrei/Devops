@@ -1,0 +1,64 @@
+image: "node"
+
+stages: 
+  - test
+  - build
+  - deploy
+
+before_script: 
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - export ANSIBLE_HOST_KEY_CHECKING=False 
+  - export 
+
+
+start_test: 
+  stage: test
+  script: 
+    - npm install
+    - yarn test --watchAll=false
+
+start_build_staging:
+  stage: build
+  image: "docker"
+  script: 
+    - docker login -u ${registry_username} -p ${registry_password} registry.efrei.yayo.fr
+    - docker build -t registry.efrei.yayo.fr/srenault-efrei/devops-d03/app:latest .
+    - docker push registry.efrei.yayo.fr/srenault-efrei/devops-d03/app:latest
+  only: 
+    - master
+
+start_build_prod:
+  stage: build
+  image: "docker"
+  script: 
+    - docker login -u ${registry_username} -p ${registry_password} registry.efrei.yayo.fr
+    - docker build -t registry.efrei.yayo.fr/srenault-efrei/devops-d03/app:${CI_COMMIT_TAG} .
+    - docker push registry.efrei.yayo.fr/srenault-efrei/devops-d03/app:${CI_COMMIT_TAG}
+  only: 
+    - tags
+    
+
+start_deploy_staging:
+  stage: deploy
+  image: vrathore/ansibleimage:latest
+  script:
+    - ansible-playbook -i infra/inventory.yml infra/app.yml -l staging --extra-vars "version=latest registry_username=${registry_username} registry_password=${registry_password}"
+  only: 
+    - master
+
+start_deploy_prod:
+  stage: deploy
+  image: vrathore/ansibleimage:latest
+  script:
+    - ansible-playbook -i infra/inventory.yml infra/app.yml -l prod --extra-vars "version=${CI_COMMIT_TAG} registry_username=${registry_username} registry_password=${registry_password}"
+  only: 
+    - tags
+    
+
+
+
+

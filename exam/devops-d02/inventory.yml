@@ -1,0 +1,19 @@
+all:
+  vars:
+   ansible_user: root
+   ansible_python_interpreter: /usr/bin/python3
+  children:
+    wwww:
+      vars:
+       mkdir: true
+      hosts:
+        51.15.202.137:
+        163.172.155.179:
+    db:
+      vars:
+       mkdir: false
+      hosts:
+        51.158.101.69:    
+
+
+# ansible-inventory -i ./inventory.yml --list -v (list les serveurs)

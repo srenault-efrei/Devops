@@ -1,0 +1,15 @@
+- hosts: all
+  tasks: 
+
+   - name: Log into DockerHub
+     docker_login:
+        registry: registry.efrei.yayo.fr
+        username: "{{registry_username}}"
+        password: "{{registry_password}}"
+
+   - name: Deploy Container  every host   
+     docker_container:
+        name: app
+        image: registry.efrei.yayo.fr/srenault-efrei/devops-d03/app:{{ version }}
+        published_ports: 
+         '80:80'

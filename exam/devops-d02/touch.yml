@@ -1,0 +1,6 @@
+- hosts: wwww
+  tasks:
+  - name: write my name 100 times
+    template:
+      src: ./hello.j2
+      dest: /opt/E06.txt

@@ -1,0 +1,9 @@
+- name: E11
+  hosts: db
+  tasks:
+    - name: Start redis container
+      docker_container:
+        name: redis
+        image: redis:latest
+        published_ports:
+          - "6379:6379"
